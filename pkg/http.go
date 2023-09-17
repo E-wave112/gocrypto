@@ -50,16 +50,6 @@ type RateRep struct {
 	Rates Currency `json:"rates"`
 }
 
-// type Data struct {
-// 	Currency string            `json:"currency"`
-// 	Rates    map[string]string `json:"rates"`
-// }
-
-// // Define a struct to represent the entire JSON response
-// type Response struct {
-// 	Data Data `json:"data"`
-// }
-
 type Response struct {
 	Data RateRep `json:"data"`
 }
