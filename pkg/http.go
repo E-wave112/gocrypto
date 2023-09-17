@@ -49,5 +49,5 @@ func RetrieveRates(currency string) any {
 func main() {
 	currency := "BTC"
 	response := RetrieveRates(currency)
-	fmt.Printf("type % T", response)
+	fmt.Println(response)
 }
