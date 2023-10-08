@@ -1,12 +1,14 @@
 /*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
+Copyright © 2023 NAME HERE <iyayiemmanuel1@gmail.com>
 */
 package main
 
 import (
 	"fmt"
 	"os"
+	"strings"
 
+	"github.com/E-wave112/gocrypto/pkg"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -25,6 +27,42 @@ var rootCmd = &cobra.Command{
 	// Run: func(cmd *cobra.Command, args []string) { },
 }
 
+// listCmd represents the list command
+var listCmd = &cobra.Command{
+	Use:   "list",
+	Short: "lists the supported cryptocurrencies to get real-time exchange rates from",
+	Run: func(cmd *cobra.Command, args []string) {
+		supportedCurrencies := pkg.ListSupportedCryptoCurrencies()
+		fmt.Println("Supported cryptocurrencies:")
+		for _, currency := range supportedCurrencies {
+			fmt.Println(currency)
+		}
+	},
+}
+
+var getCmd = &cobra.Command{
+	Use:   "get",
+	Short: "Retrieves the exchange rate between the supported cryptocurrencies and any specified fiat currency provided as an argument.",
+	Long: `A longer description that spans multiple lines and likely contains examples
+and usage of using your command. For example:
+
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		currency := strings.Join(args, " ")
+		currency = strings.ToUpper(currency)
+		response, _ := pkg.RetrieveRates(currency)
+		fmt.Printf("Realtime exchange rates for %q :\n", currency)
+
+		for crypto, rate := range response {
+			crypto = fmt.Sprintf("1 %s", crypto)
+			rate = fmt.Sprintf("%s %s", rate, currency)
+			fmt.Printf("%s: %s\n", crypto, rate)
+		}
+	},
+}
+
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
@@ -35,6 +73,9 @@ func Execute() {
 }
 
 func init() {
+	// add extra commands
+	rootCmd.AddCommand(listCmd)
+	rootCmd.AddCommand(getCmd)
 	cobra.OnInitialize(initConfig)
 
 	// Here you will define your flags and configuration settings.
