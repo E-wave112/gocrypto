@@ -21,16 +21,28 @@ var rootCmd = &cobra.Command{
 	Short: "a crypto/fiat exchange cli built with go",
 	Long: `a crypto/fiat exchange cli built with go, get real time USD
 	exchange rates of common crypto coins such as Bitcoin (BTC), Ether(ETH)
-	Dogecoin(DOGE), Solana(SOL), Shiba(SHIB) and Tether(USDT)`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Dogecoin(DOGE), Solana(SOL), Shiba(SHIB) and Tether(USDT).`,
 }
 
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "lists the supported cryptocurrencies to get real-time exchange rates from",
+	Long: `lists the supported cryptocurrencies to get real-time exchange rates from.
+
+For example:
+
+Command:
+gocrypto list
+
+Output:
+Supported cryptocurrencies:
+Bitcoin (BTC)
+Ethereum(ETH)
+Dogecoin(DOGE)
+Solana(SOL)
+Shiba(SHIB)
+Tether(USDT)`,
 	Run: func(cmd *cobra.Command, args []string) {
 		supportedCurrencies := pkg.ListSupportedCryptoCurrencies()
 		fmt.Println("Supported cryptocurrencies:")
@@ -40,17 +52,30 @@ var listCmd = &cobra.Command{
 	},
 }
 
+// getCmd represents the get command
 var getCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Retrieves the exchange rate between the supported cryptocurrencies and any specified fiat currency provided as an argument.",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Long: `Retrieves the exchange rate between the supported cryptocurrencies and any specified fiat currency provided as an argument.
+For example:
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Command:
+gocrypto get USD
+
+Output:
+Realtime exchange rates for "USD" :
+1 Bitcoin:      27547.935 USD
+1 Ethereum:       1577.875 USD
+1 Dogecoin:          0.058605 USD
+1 Solana:         21.99 USD
+1 Shiba:          0.000007 USD
+1 Tether:          1.000195 USD`,
 	Run: func(cmd *cobra.Command, args []string) {
 		currency := strings.Join(args, " ")
+		if currency == "" {
+			// defaults to usd
+			currency = "USD"
+		}
 		currency = strings.ToUpper(currency)
 		response, _ := pkg.RetrieveRates(currency)
 		fmt.Printf("Realtime exchange rates for %q :\n", currency)
@@ -81,6 +106,8 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
+	// sets the Usage template of the getCmd command to gocrypto get [currency] [flags] instead of gocrypto get [flags]
+	getCmd.SetUsageTemplate("Usage:\n  gocrypto get [currency] [flags]\n\n Flags:\n  -h, --help   help for get\n")
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.gocrypto.yaml)")
 
