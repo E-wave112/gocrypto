@@ -67,9 +67,7 @@ func formatNumber(input string) string {
 	floatToString := fmt.Sprintf("%17f", floatInput)
 	formattedOutput := strings.TrimRight(floatToString, "0")
 	// Remove trailing "." if present
-	if strings.HasSuffix(formattedOutput, ".") {
-		formattedOutput = strings.TrimSuffix(formattedOutput, ".")
-	}
+	formattedOutput = strings.TrimSuffix(formattedOutput, ".")
 	// return the `formattedoutput` as a significant figure
 	return formattedOutput
 }
