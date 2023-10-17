@@ -83,8 +83,8 @@ func RetrieveRates(currency string) (Rates, error) {
 	}
 	LoggerMethod("json", "response", string(resp.Data))
 	var data Response
-	marsahelErr := json.Unmarshal(resp.Data, &data)
-	if marsahelErr != nil {
+	marsahalErr := json.Unmarshal(resp.Data, &data)
+	if marsahalErr != nil {
 		return Rates{}, ErrBadRequest
 	}
 	rates := data.Data
