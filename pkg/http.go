@@ -67,9 +67,7 @@ func formatNumber(input string) string {
 	floatToString := fmt.Sprintf("%17f", floatInput)
 	formattedOutput := strings.TrimRight(floatToString, "0")
 	// Remove trailing "." if present
-	if strings.HasSuffix(formattedOutput, ".") {
-		formattedOutput = formattedOutput[:len(formattedOutput)-1]
-	}
+	formattedOutput = strings.TrimSuffix(formattedOutput, ".")
 	// return the `formattedoutput` as a significant figure
 	return formattedOutput
 }
@@ -85,7 +83,10 @@ func RetrieveRates(currency string) (Rates, error) {
 	}
 	LoggerMethod("json", "response", string(resp.Data))
 	var data Response
-	json.Unmarshal(resp.Data, &data)
+	marsahalErr := json.Unmarshal(resp.Data, &data)
+	if marsahalErr != nil {
+		return Rates{}, ErrBadRequest
+	}
 	rates := data.Data
 	context := Rates{
 		"Bitcoin":  formatNumber(rates.Rates.BTC),
@@ -105,8 +106,8 @@ func ListSupportedCryptoCurrencies() []string {
 	return supportedCurrencies
 }
 
-func main() {
-	currency := "USD"
-	response, _ := RetrieveRates(currency)
-	fmt.Println(response)
-}
+// func main() {
+// 	currency := "USD"
+// 	response, _ := RetrieveRates(currency)
+// 	fmt.Println(response)
+// }
