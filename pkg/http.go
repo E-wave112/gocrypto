@@ -64,7 +64,7 @@ func formatNumber(input string) string {
 	floatInput, _ := strconv.ParseFloat(input, 64)
 	// get the inverse of the floatInput
 	floatInput = 1 / floatInput
-	floatToString := fmt.Sprintf("%17f", floatInput)
+	floatToString := fmt.Sprintf("%f", floatInput)
 	formattedOutput := strings.TrimRight(floatToString, "0")
 	// Remove trailing "." if present
 	formattedOutput = strings.TrimSuffix(formattedOutput, ".")
