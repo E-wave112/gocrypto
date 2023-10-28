@@ -50,3 +50,4 @@ Other commands are `gocrypto help` and `gocrypto completion [command]` for Gener
 ## Want to contribute?
 
 Contributions are welcome! Kindly refer to the [contribution guidelines](https://github.com/E-wave112/gocrypto/blob/main/CONTRIBUTING.md)
+
