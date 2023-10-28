@@ -1,6 +1,6 @@
 # gocrypto
-a crypto/fiat exchange cli built with go
 
+a crypto/fiat exchange cli built with go
 
 ## Table of content
 
@@ -10,6 +10,7 @@ a crypto/fiat exchange cli built with go
 - [Want to contribute?](#want-to-contribute)
 
 ## Getting Started
+
 To get started, install [Go](https://go.dev) if you haven't already, then run the following command to install the CLI.
 
 ```bash
@@ -21,6 +22,7 @@ go install github.com/E-wave112/gocrypto/cmd/gocrypto@latest
 ```bash
 gocrypto [command]
 ```
+
 A pictorial representation of just running the `gocrypto` command without any arguments.
 
 ![gocrypto](assets/gocrypto.png)
@@ -44,8 +46,6 @@ Retrieves the exchange rate between the supported cryptocurrencies and any speci
 ![gocrypto get](assets/gocrypto-get.png)
 
 Other commands are `gocrypto help` and `gocrypto completion [command]` for Generating the autocompletion script for the specified shell be it `bash`, `zsh`, `fish`, or `powershell`.
-
-
 
 ## Want to contribute?
 
