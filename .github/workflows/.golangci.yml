@@ -16,11 +16,14 @@ jobs:
   golangci-lint:
     name: lint
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: ["1.18", "1.19", "1.20", "1.21"]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
         with:
-          go-version: "1.21"
+          go-version: ${{ matrix.go-version }}
           cache: false
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
@@ -28,11 +31,14 @@ jobs:
   golangci-test:
     name: test
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: ["1.18", "1.19", "1.20", "1.21"]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
         with:
-          go-version: "1.21"
+          go-version: ${{ matrix.go-version }}
           cache: false
       - name: test
         run: go test -C pkg
