@@ -1,4 +1,4 @@
-name: golangci-lint
+name: golangci-lint-test
 on:
   push:
     branches:
@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  golangci:
+  golangci-lint:
     name: lint
     runs-on: ubuntu-latest
     steps:
@@ -25,7 +25,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
 
-  golangtest:
+  golangci-test:
     name: test
     runs-on: ubuntu-latest
     steps:
