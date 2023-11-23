@@ -20,7 +20,7 @@ func getHealthCheck(w http.ResponseWriter, r *http.Request) {
 func main() {
 	scheduler := gocron.NewScheduler(time.UTC)
 	_, jobErr := scheduler.Every("2m").Do(func() {
-		pkg.LoggerMethod("cronservice", "cron", "cc rate background service is starting....")
+		pkg.LoggerMethod("cronservice", "cron", "exchange rate background service is starting....")
 		currency := "USD"
 		rates, _ := pkg.RetrieveRates(currency)
 		fmt.Println(rates)
