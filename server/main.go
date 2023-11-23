@@ -6,9 +6,10 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/E-wave112/gocrypto/pkg"
-	"github.com/robfig/cron"
+	"github.com/go-co-op/gocron"
 )
 
 func getHealthCheck(w http.ResponseWriter, r *http.Request) {
@@ -17,19 +18,22 @@ func getHealthCheck(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-
-	c := cron.New()
-
-	c.AddFunc("* 2 * * * *", func() {
+	scheduler := gocron.NewScheduler(time.UTC)
+	_, jobErr := scheduler.Every("2m").Do(func() {
+		pkg.LoggerMethod("cronservice", "cron", "cc rate background service is starting....")
 		currency := "USD"
 		rates, _ := pkg.RetrieveRates(currency)
 		fmt.Println(rates)
 	})
+
+	if jobErr != nil {
+		newErr := errors.New("an error occurred when starting the cron service")
+		fmt.Println(newErr)
+	}
+
+	scheduler.StartAsync()
 	mux := http.NewServeMux()
 	mux.HandleFunc("/check", getHealthCheck)
-
-	// Start the Cron job scheduler
-	c.Start()
 
 	err := http.ListenAndServe(":9000", mux)
 	if errors.Is(err, http.ErrServerClosed) {
