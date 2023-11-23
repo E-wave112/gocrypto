@@ -20,12 +20,9 @@ func main() {
 
 	c := cron.New()
 
-	c.AddFunc("", func() {
+	c.AddFunc("* 2 * * * *", func() {
 		currency := "USD"
 		rates, _ := pkg.RetrieveRates(currency)
-		// if err != nil {
-		// 	return "could not retrieve the rates at this time"
-		// }
 		fmt.Println(rates)
 	})
 	mux := http.NewServeMux()
