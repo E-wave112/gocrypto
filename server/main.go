@@ -13,7 +13,9 @@ import (
 )
 
 func getHealthCheck(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, "the system is up and running!\n")
+	redisVal := client()
+
+	io.WriteString(w, fmt.Sprintf("%s\n", redisVal))
 
 }
 
