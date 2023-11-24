@@ -5,6 +5,7 @@ package main
 
 import (
 	"fmt"
+	"net/mail"
 	"os"
 	"strings"
 
@@ -86,6 +87,26 @@ Realtime exchange rates for "USD" :
 			fmt.Printf("%s: %s\n", crypto, rate)
 		}
 	},
+}
+
+var subscribeCmd = &cobra.Command{
+	Use:   "subscribe",
+	Short: "Allows users to subscribe for daily price alerts of the supported cryptocurrency exchange rates. defaults to USD",
+	Run: func(cmd *cobra.Command, args []string) {
+		email := strings.Join(args, " ")
+		_, err := mail.ParseAddress(email)
+		if err != nil {
+			fmt.Printf("%s is not a valid email address", email)
+		}
+		// response, ok :=
+		fmt.Printf("subscription successful!")
+	},
+}
+
+var unSubscribeCmd = &cobra.Command{
+	Use:   "unsubscribe",
+	Short: "Allows users to unsubscribe from daily price alerts of the supported cryptocurrency exchange rates",
+	Run:   func(cmd *cobra.Command, args []string) {},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

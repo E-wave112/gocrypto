@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"errors"
@@ -13,19 +13,21 @@ import (
 )
 
 func getHealthCheck(w http.ResponseWriter, r *http.Request) {
-	redisVal := client()
+	val, ok := setValueInRedis("dwave@insight7.io")
+	// redisVal := "up and running!"
 
-	io.WriteString(w, fmt.Sprintf("%s\n", redisVal))
+	io.WriteString(w, fmt.Sprintf("%s : %v\n", val, ok))
 
 }
 
 func main() {
 	scheduler := gocron.NewScheduler(time.UTC)
-	_, jobErr := scheduler.Every("2m").Do(func() {
+	_, jobErr := scheduler.Every("30m").Do(func() {
 		pkg.LoggerMethod("cronservice", "cron", "exchange rate background service is starting....")
 		currency := "USD"
 		rates, _ := pkg.RetrieveRates(currency)
 		fmt.Println(rates)
+		// TODO: function to retrieve and send emails to subscribers
 	})
 
 	if jobErr != nil {
