@@ -1,9 +1,10 @@
-package server
+package main
 
 import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -13,7 +14,7 @@ import (
 )
 
 func getHealthCheck(w http.ResponseWriter, r *http.Request) {
-	val, ok := setValueInRedis("dwave@insight7.io")
+	val, ok := setValueInRedis("safin@outlook.com")
 	// redisVal := "up and running!"
 
 	io.WriteString(w, fmt.Sprintf("%s : %v\n", val, ok))
@@ -40,6 +41,7 @@ func main() {
 	mux.HandleFunc("/check", getHealthCheck)
 
 	err := http.ListenAndServe(":9000", mux)
+	log.Printf("server running on port 9000\n")
 	if errors.Is(err, http.ErrServerClosed) {
 		fmt.Printf("server closed\n")
 	} else if err != nil {

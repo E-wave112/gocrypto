@@ -1,7 +1,8 @@
-package server
+package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"slices"
 	"time"
@@ -9,8 +10,6 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/spf13/viper"
 )
-
-var ctx, _ = context.WithTimeout(context.Background(), 10*time.Second)
 
 func client() *redis.Client {
 	viper.SetConfigFile(".env")
@@ -42,15 +41,24 @@ var redisClient = client()
 
 func retrieveValuesFromRedisStore() []string {
 
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+
+	defer cancel()
+
 	users, resultErr := redisClient.LRange(ctx, "subscribers", 0, -1).Result()
 	if resultErr != nil {
 		// panic(resultErr)
 		log.Fatalf("an error occurred while retrieving the users %s\n", resultErr)
 	}
+
 	return users
 }
 
 func setValueInRedis(email string) (string, bool) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+
+	defer cancel()
 
 	// setErr := redisClient.Set(ctx, "foo", "bar", 0).Err()
 	// if setErr != nil {
@@ -58,13 +66,15 @@ func setValueInRedis(email string) (string, bool) {
 	// }
 
 	subscribedUsers := retrieveValuesFromRedisStore()
+	log.Printf("subscribed users count %v", len(subscribedUsers))
 	if len(subscribedUsers) == 0 {
 		setErr := redisClient.LPush(ctx, "subscribers", email).Err()
 		if setErr != nil {
 			// panic(setErr)
 			log.Fatalf("an error occurred while inserting the initial value: %s\n", setErr)
 		}
-		return "success", true
+		response := fmt.Sprintf("%s successfully subscribed", email)
+		return response, true
 	}
 	// check if email already exists in the redis list (insert if false, otherwise return the list as is)
 	filteredSubscribedUsers := slices.DeleteFunc[[]string](subscribedUsers, func(item string) bool {
@@ -77,9 +87,10 @@ func setValueInRedis(email string) (string, bool) {
 	if len(filteredSubscribedUsers) == 0 {
 		setErr := redisClient.LPush(ctx, "subscribers", email).Err()
 		if setErr != nil {
-			// panic(setErr)
 			log.Fatalf("an error occurred while inserting the value: %s\n", setErr)
 		}
+		response := fmt.Sprintf("%s successfully subscribed", email)
+		return response, true
 	}
 
 	return "email already exists", false
