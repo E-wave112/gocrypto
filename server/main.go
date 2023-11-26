@@ -14,7 +14,7 @@ import (
 )
 
 func getHealthCheck(w http.ResponseWriter, r *http.Request) {
-	val, ok := setValueInRedis("safin@outlook.com")
+	val, ok := pkg.SetValueInRedis("safin@outlook.com")
 	// redisVal := "up and running!"
 
 	io.WriteString(w, fmt.Sprintf("%s : %v\n", val, ok))

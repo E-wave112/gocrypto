@@ -1,4 +1,4 @@
-package main
+package pkg
 
 import (
 	"context"
@@ -54,7 +54,7 @@ func retrieveValuesFromRedisStore() []string {
 	return users
 }
 
-func setValueInRedis(email string) (string, bool) {
+func SetValueInRedis(email string) (string, bool) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 
