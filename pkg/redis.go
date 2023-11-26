@@ -96,3 +96,35 @@ func SetValueInRedis(email string) (string, bool) {
 	return "email already exists", false
 
 }
+
+func UnsetValueInRedis(email string) (string, bool) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+
+	defer cancel()
+
+	subscribedUsers := retrieveValuesFromRedisStore()
+	log.Printf("subscribed users count %v", len(subscribedUsers))
+
+	if len(subscribedUsers) == 0 {
+		return "this email address is not subscribed to this alert", false
+	}
+
+	// check if email already exists in the redis list (return error if false, otherwise offset from the list)
+	filteredSubscribedUsers := slices.DeleteFunc[[]string](subscribedUsers, func(item string) bool {
+		return item != email
+
+	})
+	log.Printf("filtered subs %v", filteredSubscribedUsers)
+
+	if len(filteredSubscribedUsers) == 0 {
+		return "this email address is not subscribed to this alert", false
+	}
+
+	unSetErr := redisClient.LRem(ctx, "subscribers", 0, email).Err()
+	if unSetErr != nil {
+		log.Fatalf("an error occurred while unsetting the value: %s\n", unSetErr)
+	}
+	response := fmt.Sprintf("%s successfully unsubscribed", email)
+	return response, true
+
+}

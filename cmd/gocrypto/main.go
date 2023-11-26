@@ -16,6 +16,11 @@ import (
 
 var cfgFile string
 
+func validateEmail(email string) bool {
+	_, err := mail.ParseAddress(email)
+	return err == nil
+}
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "gocrypto",
@@ -94,8 +99,8 @@ var subscribeCmd = &cobra.Command{
 	Short: "Allows users to subscribe for daily price alerts of the supported cryptocurrency exchange rates. defaults to USD",
 	Run: func(cmd *cobra.Command, args []string) {
 		email := strings.Join(args, " ")
-		_, err := mail.ParseAddress(email)
-		if err != nil {
+		isValid := validateEmail(email)
+		if !isValid {
 			fmt.Printf("%s is not a valid email address", email)
 		}
 		response, ok := pkg.SetValueInRedis(email)
@@ -109,7 +114,18 @@ var subscribeCmd = &cobra.Command{
 var unSubscribeCmd = &cobra.Command{
 	Use:   "unsubscribe",
 	Short: "Allows users to unsubscribe from daily price alerts of the supported cryptocurrency exchange rates",
-	Run:   func(cmd *cobra.Command, args []string) {},
+	Run: func(cmd *cobra.Command, args []string) {
+		email := strings.Join(args, " ")
+		isValid := validateEmail(email)
+		if !isValid {
+			fmt.Printf("%s is not a valid email address", email)
+		}
+		response, ok := pkg.UnsetValueInRedis(email)
+		if !ok {
+			fmt.Printf("This email address is not subscribed to this alert")
+		}
+		fmt.Println(response)
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -125,6 +141,8 @@ func init() {
 	// add extra commands
 	rootCmd.AddCommand(listCmd)
 	rootCmd.AddCommand(getCmd)
+	rootCmd.AddCommand(subscribeCmd)
+	rootCmd.AddCommand(unSubscribeCmd)
 	cobra.OnInitialize(initConfig)
 
 	// Here you will define your flags and configuration settings.
