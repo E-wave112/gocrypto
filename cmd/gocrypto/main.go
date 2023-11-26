@@ -98,8 +98,11 @@ var subscribeCmd = &cobra.Command{
 		if err != nil {
 			fmt.Printf("%s is not a valid email address", email)
 		}
-		// response, ok :=
-		fmt.Printf("subscription successful!")
+		response, ok := pkg.SetValueInRedis(email)
+		if !ok {
+			fmt.Printf("This email is already subscribed")
+		}
+		fmt.Println(response)
 	},
 }
 
