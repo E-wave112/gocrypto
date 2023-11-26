@@ -40,8 +40,8 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/check", getHealthCheck)
 
+	log.Printf("server starting on port 9000..\n")
 	err := http.ListenAndServe(":9000", mux)
-	log.Printf("server running on port 9000\n")
 	if errors.Is(err, http.ErrServerClosed) {
 		fmt.Printf("server closed\n")
 	} else if err != nil {
