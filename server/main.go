@@ -11,6 +11,7 @@ import (
 
 	"github.com/E-wave112/gocrypto/pkg"
 	"github.com/go-co-op/gocron"
+	"github.com/spf13/viper"
 )
 
 func getHealthCheck(w http.ResponseWriter, r *http.Request) {
@@ -22,6 +23,21 @@ func getHealthCheck(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+
+	viper.SetConfigFile(".env")
+
+	// Find and read the config file
+	viperErr := viper.ReadInConfig()
+
+	if viperErr != nil {
+		log.Fatalf("Error while reading config file %s", viperErr)
+	}
+
+	port, ok := viper.Get("PORT").(string)
+
+	if !ok {
+		port = ":9000"
+	}
 	scheduler := gocron.NewScheduler(time.UTC)
 	_, jobErr := scheduler.Every("30m").Do(func() {
 		pkg.LoggerMethod("cronservice", "cron", "exchange rate background service is starting....")
@@ -40,8 +56,8 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/check", getHealthCheck)
 
-	log.Printf("server starting on port 9000..\n")
-	err := http.ListenAndServe(":9000", mux)
+	log.Printf("server listening on port %s\n", port)
+	err := http.ListenAndServe(port, mux)
 	if errors.Is(err, http.ErrServerClosed) {
 		fmt.Printf("server closed\n")
 	} else if err != nil {

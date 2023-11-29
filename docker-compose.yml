@@ -1,0 +1,23 @@
+version: "3.7"
+
+services:
+  web:
+    image: gocrypto-server:v1
+    build:
+      context: ./
+    container_name: gocrypto_server
+    restart: always
+    ports:
+      - "9000:90"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=${REDIS_URL}
+    networks:
+      - gocrypto_server_network
+
+networks:
+  gocrypto_server_network:
+    name: gocrypto_server_network
