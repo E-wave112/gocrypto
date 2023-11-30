@@ -1,16 +1,16 @@
 # comfigure google project
 provider "google" {
-  project = "gocrypto"
+  project = var.project_name
 }
 
 # deploy service to cloud run
 resource "google_cloud_run_service" "gocrypto_service" {
-  name = "gocrypto_service"
-  location = "us-central1"
+  name = var.service_name
+  location = var.region
   template {
     spec {
         containers {
-            image = "ewave112/gocrypto-server:v1"
+            image = var.container_image
         }
     }
     
