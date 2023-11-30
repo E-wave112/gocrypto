@@ -8,7 +8,7 @@ services:
     container_name: gocrypto_server
     restart: always
     ports:
-      - "9000:90"
+      - "9000:9000"
     volumes:
       - .:/app
     env_file:
@@ -20,4 +20,5 @@ services:
 
 networks:
   gocrypto_server_network:
+    driver: bridge
     name: gocrypto_server_network
